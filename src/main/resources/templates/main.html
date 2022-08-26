@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>웹소켓 통신_TTA</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+</head>
+<body>
+    <input type="button" value="웹소켓 통신 테스트 시작" onclick="start()">
+</body>
+<script>
+    let pcsStatusDataInterval;
+    let batteryStatusDataInterval;
+    let sensorStatusDataInterval;
+
+    var index = 0;
+
+    let ws = new WebSocket('ws://localhost:3100');
+    //var ws = new WebSocket('ws://101.101.216.193:3100');
+    //var ws = new WebSocket('ws://14.39.99.148:7003'); // Server
+    //var ws = new WebSocket('ws://172.30.1.24:3100'); // Server
+    //var ws = new WebSocket('ws://101.101.208.212:3100');
+
+    ws.onopen = (event) => {
+        console.log("------------------ 접속 요청 ------------------");
+        let sendData = {id: 'M/W001', eventType: 'req', deviceType: 'middleware', dataType: 'connect'};
+        ws.send(JSON.stringify(sendData));
+        console.log("---------------------------------------------\n");
+    }
+
+    ws.onmessage = (event) => {
+        console.log("\n---------------------------------------------");
+        console.log("M/W001 : Data Received From Server");
+
+        let receivedData = JSON.parse(event.data);
+
+        switch (receivedData.eventType) {
+
+            case 'req' :
+
+                switch (receivedData.dataType) {
+
+                    case 'status':
+                        console.log('              status                ');
+                        console.log(event.data);
+                        console.log('M/W001 id : ' + receivedData.id);
+                        console.log('M/W001 eventType : ' + receivedData.eventType);
+                        console.log('M/W001 dataType : ' + receivedData.dataType);
+                        console.log('M/W001 result : ' + receivedData.result);
+                        console.log('M/W001 message : ' + receivedData.message);
+                        break;
+
+                    case 'control':
+                        console.log('              control                ');
+                        console.log(event.data);
+                        console.log('M/W001 id : ' + receivedData.id);
+                        console.log('M/W001 eventType : ' + receivedData.eventType);
+                        console.log('M/W001 deviceType : ' + receivedData.deviceType);
+                        console.log('M/W001 dataType : ' + receivedData.dataType);
+                        console.log('M/W001 data : ' + receivedData.data);
+                        console.log('M/W001 targetId : ' + receivedData.data.targetId);
+                        console.log('M/W001 controlType : ' + receivedData.data.controlType);
+                        console.log('M/W001 controlValue : ' + receivedData.data.controlValue);
+
+                        let sendData = {
+                            id: receivedData.id,
+                            eventType: 'res',
+                            dataType: receivedData.dataType,
+                            result: 'success',
+                            message: ''
+                        };
+
+                        console.log("---------------------------------------------");
+                        console.log("sendData : " + JSON.stringify(sendData));
+                        console.log("---------------------------------------------\n\n");
+
+                        ws.send(JSON.stringify(sendData));
+
+                        sendStatusData(receivedData.data.controlType, receivedData.data.controlValue);
+
+                        break;
+                    default:
+                }
+
+                break;
+
+            case 'res' :
+
+                switch (receivedData.dataType) {
+                    case 'connect':
+                        console.log('              connect                ');
+                        console.log(event.data);
+                        console.log('M/W001 id : ' + receivedData.id);
+                        console.log('M/W001 eventType : ' + receivedData.eventType);
+                        console.log('M/W001 dataType : ' + receivedData.dataType);
+                        console.log('M/W001 result : ' + receivedData.result);
+                        console.log('M/W001 message : ' + receivedData.message);
+                        break;
+
+                    case 'status':
+                        console.log('              status                ');
+                        console.log(event.data);
+                        console.log('M/W001 id : ' + receivedData.id);
+                        console.log('M/W001 eventType : ' + receivedData.eventType);
+                        console.log('M/W001 dataType : ' + receivedData.dataType);
+                        console.log('M/W001 result : ' + receivedData.result);
+                        console.log('M/W001 message : ' + receivedData.message);
+                        break;
+
+                    case 'control':
+                        console.log('              control                ');
+                        console.log(event.data);
+                        console.log('M/W001 id : ' + receivedData.id);
+                        console.log('M/W001 eventType : ' + receivedData.eventType);
+                        console.log('M/W001 deviceType : ' + receivedData.deviceType);
+                        console.log('M/W001 dataType : ' + receivedData.dataType);
+                        console.log('M/W001 data : ' + receivedData.data);
+                        console.log('M/W001 targetId : ' + receivedData.data.targetId);
+                        console.log('M/W001 controlType : ' + receivedData.data.controlType);
+                        console.log('M/W001 controlValue : ' + receivedData.data.controlValue);
+
+                        let sendData = {
+                            id: receivedData.id,
+                            eventType: 'res',
+                            dataType: receivedData.dataType,
+                            result: 'success',
+                            message: ''
+                        };
+
+                        console.log("---------------------------------------------");
+                        console.log("sendData : " + JSON.stringify(sendData));
+                        console.log("---------------------------------------------\n\n");
+
+                        ws.send(JSON.stringify(sendData));
+
+                        break;
+                    default:
+                }
+
+                break;
+
+        }
+
+        console.log("---------------------------------------------\n\n");
+    }
+
+    //브라우저 종료시 interval 종료
+    window.addEventListener('beforeunload', (event) => {
+        // 명세에 따라 preventDefault는 호출해야하며, 기본 동작을 방지합니다.
+        event.preventDefault();
+
+        clearTimeout (pcsStatusDataInterval);
+        /*clearTimeout (batteryStatusDataInterval);
+        clearTimeout (sensorStatusDataInterval);*/
+
+        console.log("[ 웹소켓 통신 테스트 종료 ]")
+    });
+
+    //웹소켓 통신 테스트 시작
+    function start() {
+        console.log("[ 웹소켓 통신 테스트 시작 ]")
+
+        const sleep = (delay) => new Promise((resolve) => setTimeout(resolve, delay));
+
+        const timer = async () => {
+            pcsStatusDataInterval = setInterval(function() {
+                sendPcsStatusData();
+            }, 1000 );
+
+            await sleep(200);
+
+            batteryStatusDataInterval = setInterval(function() {
+                sendBatteryStatusData();
+            }, 1000 );
+
+            await sleep(200);
+
+            sensorStatusDataInterval = setInterval(function() {
+                sendSensorStatusData();
+            }, 1000 );
+        };
+        timer();
+    }
+
+    function sendPcsStatusData() {
+        console.log("[ PCS ]")
+
+        var operationStatus;
+        var chargingStatus;
+        var disChargePower;
+        var rSVolt;
+        var upRCurr;
+        var dcLinkVolt;
+        var frequencyHz;
+        var sTVolt;
+        var upSCurr;
+        var dcBatteryVolt;
+        var tRVolt;
+        var upTCurr;
+        var dcBatteryCurr;
+        var faultExistYn;
+        var faultList;
+
+        if (index == 0) {
+            operationStatus = 'ready';
+            chargingStatus = 'charging';
+            disChargePower = '101.5';
+            rSVolt = '41.2';
+            upRCurr = '11.2';
+            dcLinkVolt = '41.5';
+            frequencyHz = '23.3';
+            sTVolt = '38.8';
+            upSCurr = '11.4';
+            dcBatteryVolt = '221.2';
+            tRVolt = '42.2';
+            upTCurr = '11.3';
+            dcBatteryCurr = '11.5';
+            faultExistYn = 'N';
+            faultList = [{"errorCode": "10", "errorCodeName":"Power stack short circuit Trip"},{"errorCode": "20","errorCodeName":"Controller A/D Converter Line Offset Trip (Current part)"},{"errorCode": "30","errorCodeName":"Controller Fault"},{"errorCode": "20","errorCodeName":"Controller Fault"},{"errorCode": "20","errorCodeName":"Controller Fault"},{"errorCode": "20","errorCodeName":"Controller Fault"},{"errorCode": "20","errorCodeName":"Controller Fault"},{"errorCode": "20","errorCodeName":"Controller Fault"},{"errorCode": "20","errorCodeName":"Controller Fault11"},{"errorCode": "20","errorCodeName":"Controller Fault121313"}];
+        } else {
+            operationStatus = 'ready';
+            chargingStatus = 'discharging';
+            disChargePower = '100.5';
+            rSVolt = '40.2';
+            upRCurr = '10.2';
+            dcLinkVolt = '40.5';
+            frequencyHz = '22.3';
+            sTVolt = '39.8';
+            upSCurr = '10.4';
+            dcBatteryVolt = '220.2';
+            tRVolt = '41.2';
+            upTCurr = '10.3';
+            dcBatteryCurr = '10.5';
+            faultExistYn = 'N';
+            faultList = [{"errorCode": "20","errorCodeName":"Power stack short circuit Trip"},{"errorCode": "20","errorCodeName":"Controller A/D Converter Line Offset Trip (Current part)"},{"errorCode": "20","errorCodeName":"Controller Fault"},{"errorCode": "20","errorCodeName":"Controller Fault"},{"errorCode": "20","errorCodeName":"Controller Fault"},{"errorCode": "20","errorCodeName":"Controller Fault"},{"errorCode": "20","errorCodeName":"Controller Fault"},{"errorCode": "20","errorCodeName":"Controller Fault"},{"errorCode": "20","errorCodeName":"Controller Fault11"},{"errorCode": "20","errorCodeName":"Controller Fault121313"},{"errorCode": "20","errorCodeName":"Controller Fault"}];
+        }
+
+        let pcsStatusData = {
+            operationStatus : operationStatus,
+            chargingStatus : chargingStatus,
+            faultExistYn : faultExistYn,
+            disChargePower : disChargePower,
+            rSVolt : rSVolt,
+            upRCurr : upRCurr,
+            dcLinkVolt : dcLinkVolt,
+            frequencyHz : frequencyHz,
+            sTVolt : sTVolt,
+            upSCurr : upSCurr,
+            dcBatteryVolt : dcBatteryVolt,
+            tRVolt : tRVolt,
+            upTCurr : upTCurr,
+            dcBatteryCurr : dcBatteryCurr,
+            faultList : faultList
+        };
+
+        let sendData = {
+            id: 'M/W001',
+            eventType: 'req',
+            deviceType: 'pcs',
+            dataType: 'status',
+            data: pcsStatusData
+        };
+
+        console.log("---------------------------------------------");
+        console.log("전송한 PCS 데이터 : " + JSON.stringify(sendData));
+        console.log("---------------------------------------------\n\n");
+
+        ws.send(JSON.stringify(sendData));
+
+        index++;
+
+        if (index == 5) {
+            index = 0;
+        }
+
+        insertStatusData(pcsStatusData, '/ajax/insertPcsStatusData');
+    }
+
+    function sendBatteryStatusData() {
+        console.log("[ Battery ]")
+
+        var soc0;
+        var rackVolt0;
+        var rackCurrent0;
+        var faultList0;
+        var faultExistYn0;
+        var rackNo0;
+        var chargingStatus;
+        var currentSensor1;
+        var currentSensor2;
+        var currentLimit;
+
+        if (index == 0) {
+            rackNo0 = '1';
+            chargingStatus = 'charging';
+            soc0 = '22.2';
+            rackVolt0 = '23.1';
+            rackCurrent0 = '11.1';
+            faultExistYn0 = 'N';
+            faultList0 = [];
+            currentSensor1 = '1111';
+            currentSensor2 = '2222';
+            currentLimit = '28416';
+
+        } else if (index == 1) {
+            rackNo0 = '2';
+            chargingStatus = 'error';
+            soc0 = '';
+            rackVolt0 = '';
+            rackCurrent0 = '';
+            faultExistYn0 = 'Y';
+            faultList0 = [{"errorCode":"batteryError", "errorCodeName":"batteryRack3"},{"errorCode":"batteryError", "errorCodeName":"batteryRack3"}];
+            currentSensor1 = '1111';
+            currentSensor2 = '2222';
+            currentLimit = '28416';
+
+        } else if (index == 2) {
+            rackNo0 = '2';
+            chargingStatus = 'charging';
+            soc0 = '50.1';
+            rackVolt0 = '23.1';
+            rackCurrent0 = '11.1';
+            faultExistYn0 = 'N';
+            faultList0 = [];
+            currentSensor1 = '1111';
+            currentSensor2 = '2222';
+            currentLimit = '28416';
+
+        } else if (index == 3) {
+            rackNo0 = '1';
+            chargingStatus = 'waiting';
+            soc0 = '';
+            rackVolt0 = '';
+            rackCurrent0 = '';
+            faultExistYn0 = 'N';
+            faultList0 = [];
+            currentSensor1 = '1111';
+            currentSensor2 = '2222';
+            currentLimit = '28416';
+
+        } else {
+            rackNo0 = '1';
+            chargingStatus = 'error';
+            soc0 = '';
+            rackVolt0 = '';
+            rackCurrent0 = '';
+            faultExistYn0 = 'Y';
+            faultList0 = [{"errorCode":"batteryError", "errorCodeName":"batteryRack3"},{"errorCode":"batteryError", "errorCodeName":"batteryRack3"}];
+            currentSensor1 = '1111';
+            currentSensor2 = '2222';
+            currentLimit = '28416';
+        }
+
+        let batteryData = {
+            rackNo: rackNo0,
+            chargingStatus: chargingStatus,
+            soc: soc0,
+            rackVolt: rackVolt0,
+            rackCurrent: rackCurrent0,
+            faultExistYn: faultExistYn0,
+            faultList: faultList0,
+            currentSensor1: currentSensor1,
+            currentSensor2: currentSensor2,
+            currentLimit: currentLimit
+        }
+
+        let sendData = {
+            id: 'M/W004',
+            eventType: 'req',
+            deviceType: 'battery',
+            dataType: 'status',
+            data: batteryData
+        };
+
+        console.log("---------------------------------------------");
+        console.log("전송한 배터리 데이터 : " + JSON.stringify(sendData));
+        console.log("---------------------------------------------\n\n");
+
+        ws.send(JSON.stringify(sendData));
+
+        index++;
+
+        if (index == 5) {
+            index = 0;
+        }
+
+        insertStatusData(batteryData, '/ajax/insertBatteryStatusData');
+    }
+
+    function sendSensorStatusData() {
+        console.log("[ Sensor ]")
+
+        var pmsCode;
+        var essCode;
+        var deviceCode;
+        var deviceName;
+        var faultExistYn;
+        var measures;
+
+        if (index == 0) {
+            pmsCode = 'P001';
+            essCode = 'E001';
+            deviceCode = 'D001';
+            deviceName = '온도';
+            faultExistYn = 'N';
+            measures = '25.5';
+
+        } else if (index == 1) {
+            pmsCode = 'P001';
+            essCode = 'E001';
+            deviceCode = 'D002';
+            deviceName = '습도';
+            faultExistYn = 'N';
+            measures = '49.5';
+
+        } else if (index == 2) {
+            pmsCode = 'P001';
+            essCode = 'E001';
+            deviceCode = 'D001';
+            deviceName = '온도';
+            faultExistYn = 'N';
+            measures = '25.6';
+
+        } else if (index == 3) {
+            pmsCode = 'P001';
+            essCode = 'E001';
+            deviceCode = 'D002';
+            deviceName = '습도';
+            faultExistYn = 'N';
+            measures = '49.4';
+
+        } else {
+            pmsCode = 'P001';
+            essCode = 'E001';
+            deviceCode = 'D001';
+            deviceName = '온도';
+            faultExistYn = 'N';
+            measures = '25.5';
+        }
+
+        let sensorData = {
+            pmsCode: pmsCode,
+            essCode: essCode,
+            deviceCode: deviceCode,
+            deviceName: deviceName,
+            faultExistYn: faultExistYn,
+            measures: measures
+        }
+
+        let sendData = {
+            id: 'M/W004',
+            eventType: 'req',
+            deviceType: 'battery',
+            dataType: 'status',
+            data: sensorData
+        };
+
+        console.log("---------------------------------------------");
+        console.log("전송한 배터리 데이터 : " + JSON.stringify(sendData));
+        console.log("---------------------------------------------\n\n");
+
+        ws.send(JSON.stringify(sendData));
+
+        index++;
+
+        if (index == 5) {
+            index = 0;
+        }
+
+        insertStatusData(sensorData, '/ajax/insertSensorStatusData');
+    }
+
+    function insertStatusData(data, url) {
+        $.ajax({
+            type: 'post',
+            url: url,
+            data: JSON.stringify(data),
+            dataType: 'json',
+            contentType: "application/json; charset=utf-8",
+            success: function (data) {
+
+            },
+            beforeSend: function () {
+
+            },
+            complete: function () {
+
+            }
+        });
+    }
+</script>
+</html>
