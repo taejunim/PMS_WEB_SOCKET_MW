@@ -7,9 +7,10 @@
     </settings>
 
     <typeAliases>
-        <typeAlias alias="string"           type="java.lang.String"/>
-        <typeAlias alias="int"              type="java.lang.Integer"/>
-        <typeAlias alias="pcsStatusObject"  type="kr.co.metisinfo.pms_web_socket_middleware.Object.PcsStatusObject"/>
+        <typeAlias alias="string"               type="java.lang.String"/>
+        <typeAlias alias="int"                  type="java.lang.Integer"/>
+        <typeAlias alias="pcsStatusObject"      type="kr.co.metisinfo.pms_web_socket_middleware.Object.PcsStatusObject"/>
+        <typeAlias alias="batteryStatusObject"  type="kr.co.metisinfo.pms_web_socket_middleware.Object.BatteryStatusObject"/>
     </typeAliases>
 
 

@@ -1,5 +1,6 @@
 package kr.co.metisinfo.pms_web_socket_middleware.controller;
 
+import kr.co.metisinfo.pms_web_socket_middleware.Object.BatteryStatusObject;
 import kr.co.metisinfo.pms_web_socket_middleware.Object.PcsStatusObject;
 import org.springframework.stereotype.Service;
 
@@ -16,4 +17,10 @@ public class MainSerivceImpl {
 
         return mainMapper.insertPcsData(pcsStatusObject);
     }
+
+    public int insertBatteryData(BatteryStatusObject batteryStatusObject) {
+
+        return mainMapper.insertBatteryData(batteryStatusObject);
+    }
+
 }
