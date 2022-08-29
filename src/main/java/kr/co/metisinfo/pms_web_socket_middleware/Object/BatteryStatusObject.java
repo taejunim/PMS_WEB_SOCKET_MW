@@ -2,6 +2,7 @@ package kr.co.metisinfo.pms_web_socket_middleware.Object;
 
 import lombok.Data;
 
+import java.time.Instant;
 import java.util.List;
 
 @Data
@@ -16,4 +17,5 @@ public class BatteryStatusObject {
     public String currentSensor2;
     public String currentLimit;
     public List<FaultListObject> faultList;
+    public String regDate = String.valueOf(Instant.now().getEpochSecond());
 }

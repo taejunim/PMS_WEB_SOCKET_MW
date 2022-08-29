@@ -9,6 +9,13 @@ import org.springframework.web.bind.annotation.*;
 @Controller
 public class MainController {
 
+
+    private final MainSerivceImpl mainSerivceImpl;
+
+    public MainController(MainSerivceImpl mainSerivceImpl) {
+        this.mainSerivceImpl = mainSerivceImpl;
+    }
+
     @GetMapping("/main") // 기본 주소 뒤에 "/main"가 오면 main 메서드가 실행
     public String main(){
         // "main"이라는 문자열(String)을 반환하는데,
@@ -38,6 +45,17 @@ public class MainController {
         System.out.println("faultList : " + pcsStatusObject.faultList);
         System.out.println("[ -------------------------------------  ]\n\n");
 
+        if (pcsStatusObject.chargingStatus.equals("charging")) {
+            pcsStatusObject.chargingStatus = "1";
+        } else if (pcsStatusObject.chargingStatus.equals("discharging")) {
+            pcsStatusObject.chargingStatus = "2";
+        } else if (pcsStatusObject.chargingStatus.equals("waiting")) {
+            pcsStatusObject.chargingStatus = "0";
+        }
+
+        int result = mainSerivceImpl.insertPcsData(pcsStatusObject);
+        System.out.println("결과: "+result);
+
         return "main";
     }
 
@@ -60,10 +78,25 @@ public class MainController {
         return "main";
     }
 
-    @RequestMapping("/ajax/insertSensorStatusData")
-    public String insertBatteryStatusData(@RequestBody SensorStatusObject sensorStatusObject) {
+    @RequestMapping("/ajax/insertPcsInnerSensorStatusData")
+    public String insertPcsInnerSensorStatusData(@RequestBody SensorStatusObject sensorStatusObject) {
 
-        System.out.println("[ ---------- Sensor Status Data ----------  ]");
+        System.out.println("[ ---------- PCS Sensor Status Data ----------  ]");
+        System.out.println("pmsCode : " + sensorStatusObject.pmsCode);
+        System.out.println("essCode : " + sensorStatusObject.essCode);
+        System.out.println("deviceCode : " + sensorStatusObject.deviceCode);
+        System.out.println("deviceName : " + sensorStatusObject.deviceName);
+        System.out.println("faultExistYn : " + sensorStatusObject.faultExistYn);
+        System.out.println("measures : " + sensorStatusObject.measures);
+        System.out.println("[ -----------------------------------------  ]\n\n");
+
+        return "main";
+    }
+
+    @RequestMapping("/ajax/insertBatteryInnerSensorStatusData")
+    public String insertBatteryInnerSensorStatusData(@RequestBody SensorStatusObject sensorStatusObject) {
+
+        System.out.println("[ ---------- Battery Sensor Status Data ----------  ]");
         System.out.println("pmsCode : " + sensorStatusObject.pmsCode);
         System.out.println("essCode : " + sensorStatusObject.essCode);
         System.out.println("deviceCode : " + sensorStatusObject.deviceCode);

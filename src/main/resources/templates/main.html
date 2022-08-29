@@ -11,9 +11,13 @@
 <script>
     let pcsStatusDataInterval;
     let batteryStatusDataInterval;
-    let sensorStatusDataInterval;
+    let pcsInnerSensorStatusDataInterval;
+    let batteryInnerSensorStatusDataInterval;
 
-    var index = 0;
+    let pcsIndex = 0;
+    let batteryIndex = 0;
+    let pcsInnerSensorIndex = 0;
+    let batteryInnerSensorIndex = 0;
 
     let ws = new WebSocket('ws://localhost:3100');
     //var ws = new WebSocket('ws://101.101.216.193:3100');
@@ -165,19 +169,25 @@
         const timer = async () => {
             pcsStatusDataInterval = setInterval(function() {
                 sendPcsStatusData();
-            }, 1000 );
+            }, 2000 );
 
-            await sleep(200);
+            await sleep(500);
 
             batteryStatusDataInterval = setInterval(function() {
                 sendBatteryStatusData();
-            }, 1000 );
+            }, 2000 );
 
-            await sleep(200);
+            await sleep(500);
 
-            sensorStatusDataInterval = setInterval(function() {
-                sendSensorStatusData();
-            }, 1000 );
+            pcsInnerSensorStatusDataInterval = setInterval(function() {
+                sendPcsInnerSensorStatusData();
+            }, 2000 );
+
+            await sleep(500);
+
+            batteryInnerSensorStatusDataInterval = setInterval(function() {
+                sendBatteryInnerSensorStatusData();
+            }, 2000 );
         };
         timer();
     }
@@ -185,73 +195,41 @@
     function sendPcsStatusData() {
         console.log("[ PCS ]")
 
-        var operationStatus;
-        var chargingStatus;
-        var disChargePower;
-        var rSVolt;
-        var upRCurr;
-        var dcLinkVolt;
-        var frequencyHz;
-        var sTVolt;
-        var upSCurr;
-        var dcBatteryVolt;
-        var tRVolt;
-        var upTCurr;
-        var dcBatteryCurr;
-        var faultExistYn;
-        var faultList;
+        let chargingStatus;
 
-        if (index == 0) {
-            operationStatus = 'ready';
+        if (pcsIndex >= 0 && pcsIndex < 300) {
+
             chargingStatus = 'charging';
-            disChargePower = '101.5';
-            rSVolt = '41.2';
-            upRCurr = '11.2';
-            dcLinkVolt = '41.5';
-            frequencyHz = '23.3';
-            sTVolt = '38.8';
-            upSCurr = '11.4';
-            dcBatteryVolt = '221.2';
-            tRVolt = '42.2';
-            upTCurr = '11.3';
-            dcBatteryCurr = '11.5';
-            faultExistYn = 'N';
-            faultList = [{"errorCode": "10", "errorCodeName":"Power stack short circuit Trip"},{"errorCode": "20","errorCodeName":"Controller A/D Converter Line Offset Trip (Current part)"},{"errorCode": "30","errorCodeName":"Controller Fault"},{"errorCode": "20","errorCodeName":"Controller Fault"},{"errorCode": "20","errorCodeName":"Controller Fault"},{"errorCode": "20","errorCodeName":"Controller Fault"},{"errorCode": "20","errorCodeName":"Controller Fault"},{"errorCode": "20","errorCodeName":"Controller Fault"},{"errorCode": "20","errorCodeName":"Controller Fault11"},{"errorCode": "20","errorCodeName":"Controller Fault121313"}];
-        } else {
-            operationStatus = 'ready';
+
+        } else if (pcsIndex >= 300 && pcsIndex < 600) {
+
+            chargingStatus = 'waiting';
+
+        } else if (pcsIndex >= 600 && pcsIndex < 1200) {
+
             chargingStatus = 'discharging';
-            disChargePower = '100.5';
-            rSVolt = '40.2';
-            upRCurr = '10.2';
-            dcLinkVolt = '40.5';
-            frequencyHz = '22.3';
-            sTVolt = '39.8';
-            upSCurr = '10.4';
-            dcBatteryVolt = '220.2';
-            tRVolt = '41.2';
-            upTCurr = '10.3';
-            dcBatteryCurr = '10.5';
-            faultExistYn = 'N';
-            faultList = [{"errorCode": "20","errorCodeName":"Power stack short circuit Trip"},{"errorCode": "20","errorCodeName":"Controller A/D Converter Line Offset Trip (Current part)"},{"errorCode": "20","errorCodeName":"Controller Fault"},{"errorCode": "20","errorCodeName":"Controller Fault"},{"errorCode": "20","errorCodeName":"Controller Fault"},{"errorCode": "20","errorCodeName":"Controller Fault"},{"errorCode": "20","errorCodeName":"Controller Fault"},{"errorCode": "20","errorCodeName":"Controller Fault"},{"errorCode": "20","errorCodeName":"Controller Fault11"},{"errorCode": "20","errorCodeName":"Controller Fault121313"},{"errorCode": "20","errorCodeName":"Controller Fault"}];
         }
 
         let pcsStatusData = {
-            operationStatus : operationStatus,
             chargingStatus : chargingStatus,
-            faultExistYn : faultExistYn,
-            disChargePower : disChargePower,
-            rSVolt : rSVolt,
-            upRCurr : upRCurr,
-            dcLinkVolt : dcLinkVolt,
-            frequencyHz : frequencyHz,
-            sTVolt : sTVolt,
-            upSCurr : upSCurr,
-            dcBatteryVolt : dcBatteryVolt,
-            tRVolt : tRVolt,
-            upTCurr : upTCurr,
-            dcBatteryCurr : dcBatteryCurr,
-            faultList : faultList
+            disChargePower : chargingStatus == 'waiting' ? '0' : getRandomValue(1,100),
+            rSVolt : getRandomValue(1, 100),
+            upRCurr : getRandomValue(1, 100),
+            dcLinkVolt : getRandomValue(1, 100),
+            frequencyHz : getRandomValue(1, 100),
+            sTVolt : getRandomValue(1, 100),
+            upSCurr : getRandomValue(1, 100),
+            dcBatteryVolt : getRandomValue(1, 100),
+            tRVolt : getRandomValue(1, 100),
+            upTCurr : getRandomValue(1, 100),
+            dcBatteryCurr : getRandomValue(1, 100),
         };
+
+        insertStatusData(pcsStatusData, '/ajax/insertPcsStatusData'); //전송한 데이터 DB Insert
+
+        pcsStatusData.operationStatus = 'ready';
+        pcsStatusData.faultExistYn = 'N';
+        pcsStatusData.faultList = [];
 
         let sendData = {
             id: 'M/W001',
@@ -267,109 +245,60 @@
 
         ws.send(JSON.stringify(sendData));
 
-        index++;
+        pcsIndex++;
 
-        if (index == 5) {
-            index = 0;
+        if (pcsIndex == 1200) {
+            pcsIndex = 0;
         }
-
-        insertStatusData(pcsStatusData, '/ajax/insertPcsStatusData');
     }
 
     function sendBatteryStatusData() {
         console.log("[ Battery ]")
 
-        var soc0;
-        var rackVolt0;
-        var rackCurrent0;
-        var faultList0;
-        var faultExistYn0;
-        var rackNo0;
-        var chargingStatus;
-        var currentSensor1;
-        var currentSensor2;
-        var currentLimit;
+        let rackNo;
+        let chargingStatus;
 
-        if (index == 0) {
-            rackNo0 = '1';
+        if (batteryIndex % 2 == 0) {
+            rackNo = '1'
+        } else if (batteryIndex % 2 == 1) {
+            rackNo = '2'
+        }
+
+        if (batteryIndex >= 0 && batteryIndex < 300) {
+
             chargingStatus = 'charging';
-            soc0 = '22.2';
-            rackVolt0 = '23.1';
-            rackCurrent0 = '11.1';
-            faultExistYn0 = 'N';
-            faultList0 = [];
-            currentSensor1 = '1111';
-            currentSensor2 = '2222';
-            currentLimit = '28416';
 
-        } else if (index == 1) {
-            rackNo0 = '2';
-            chargingStatus = 'error';
-            soc0 = '';
-            rackVolt0 = '';
-            rackCurrent0 = '';
-            faultExistYn0 = 'Y';
-            faultList0 = [{"errorCode":"batteryError", "errorCodeName":"batteryRack3"},{"errorCode":"batteryError", "errorCodeName":"batteryRack3"}];
-            currentSensor1 = '1111';
-            currentSensor2 = '2222';
-            currentLimit = '28416';
+        } else if (batteryIndex >= 300 && batteryIndex < 600) {
 
-        } else if (index == 2) {
-            rackNo0 = '2';
-            chargingStatus = 'charging';
-            soc0 = '50.1';
-            rackVolt0 = '23.1';
-            rackCurrent0 = '11.1';
-            faultExistYn0 = 'N';
-            faultList0 = [];
-            currentSensor1 = '1111';
-            currentSensor2 = '2222';
-            currentLimit = '28416';
-
-        } else if (index == 3) {
-            rackNo0 = '1';
             chargingStatus = 'waiting';
-            soc0 = '';
-            rackVolt0 = '';
-            rackCurrent0 = '';
-            faultExistYn0 = 'N';
-            faultList0 = [];
-            currentSensor1 = '1111';
-            currentSensor2 = '2222';
-            currentLimit = '28416';
 
-        } else {
-            rackNo0 = '1';
-            chargingStatus = 'error';
-            soc0 = '';
-            rackVolt0 = '';
-            rackCurrent0 = '';
-            faultExistYn0 = 'Y';
-            faultList0 = [{"errorCode":"batteryError", "errorCodeName":"batteryRack3"},{"errorCode":"batteryError", "errorCodeName":"batteryRack3"}];
-            currentSensor1 = '1111';
-            currentSensor2 = '2222';
-            currentLimit = '28416';
+        } else if (batteryIndex >= 600 && batteryIndex < 1200) {
+
+            chargingStatus = 'discharging';
         }
 
-        let batteryData = {
-            rackNo: rackNo0,
+        let batteryStatusData = {
             chargingStatus: chargingStatus,
-            soc: soc0,
-            rackVolt: rackVolt0,
-            rackCurrent: rackCurrent0,
-            faultExistYn: faultExistYn0,
-            faultList: faultList0,
-            currentSensor1: currentSensor1,
-            currentSensor2: currentSensor2,
-            currentLimit: currentLimit
+            soc: getRandomValue(1, 100),
+            rackVolt: getRandomValue(1, 100),
+            rackCurrent: getRandomValue(1, 100),
+            currentSensor1: getRandomValue(1, 100),
+            currentSensor2: getRandomValue(1, 100),
+            currentLimit: getRandomValue(1, 100)
         }
+
+        insertStatusData(batteryStatusData, '/ajax/insertBatteryStatusData'); //전송한 데이터 DB Insert
+
+        batteryStatusData.rackNo = rackNo;
+        batteryStatusData.faultExistYn = 'N';
+        batteryStatusData.faultList = [];
 
         let sendData = {
-            id: 'M/W004',
+            id: 'M/W001',
             eventType: 'req',
             deviceType: 'battery',
             dataType: 'status',
-            data: batteryData
+            data: batteryStatusData
         };
 
         console.log("---------------------------------------------");
@@ -378,96 +307,105 @@
 
         ws.send(JSON.stringify(sendData));
 
-        index++;
+        batteryIndex++;
 
-        if (index == 5) {
-            index = 0;
+        if (batteryIndex == 1200) {
+            batteryIndex = 0;
         }
-
-        insertStatusData(batteryData, '/ajax/insertBatteryStatusData');
     }
 
-    function sendSensorStatusData() {
-        console.log("[ Sensor ]")
+    function sendPcsInnerSensorStatusData() {
+        console.log("[ PcsInnerSensor ]")
 
-        var pmsCode;
-        var essCode;
-        var deviceCode;
-        var deviceName;
-        var faultExistYn;
-        var measures;
+        let deviceCode;
+        let deviceName;
 
-        if (index == 0) {
-            pmsCode = 'P001';
-            essCode = 'E001';
+        if (pcsInnerSensorIndex % 2 == 0) {
             deviceCode = 'D001';
             deviceName = '온도';
-            faultExistYn = 'N';
-            measures = '25.5';
-
-        } else if (index == 1) {
-            pmsCode = 'P001';
-            essCode = 'E001';
+        } else if (pcsInnerSensorIndex % 2 == 1) {
             deviceCode = 'D002';
             deviceName = '습도';
-            faultExistYn = 'N';
-            measures = '49.5';
-
-        } else if (index == 2) {
-            pmsCode = 'P001';
-            essCode = 'E001';
-            deviceCode = 'D001';
-            deviceName = '온도';
-            faultExistYn = 'N';
-            measures = '25.6';
-
-        } else if (index == 3) {
-            pmsCode = 'P001';
-            essCode = 'E001';
-            deviceCode = 'D002';
-            deviceName = '습도';
-            faultExistYn = 'N';
-            measures = '49.4';
-
-        } else {
-            pmsCode = 'P001';
-            essCode = 'E001';
-            deviceCode = 'D001';
-            deviceName = '온도';
-            faultExistYn = 'N';
-            measures = '25.5';
         }
 
-        let sensorData = {
-            pmsCode: pmsCode,
-            essCode: essCode,
+        let pcsInnerSensorStatusData = {
+            pmsCode: 'P001',
+            essCode: 'E001',
             deviceCode: deviceCode,
             deviceName: deviceName,
-            faultExistYn: faultExistYn,
-            measures: measures
+            measures: getRandomValue(1, 100)
         }
 
+        insertStatusData(pcsInnerSensorStatusData, '/ajax/insertPcsInnerSensorStatusData');
+
+        pcsInnerSensorStatusData.faultExistYn = 'N';
+
         let sendData = {
-            id: 'M/W004',
+            id: 'M/W001',
             eventType: 'req',
-            deviceType: 'battery',
+            deviceType: 'pcsInnerSensor',
             dataType: 'status',
-            data: sensorData
+            data: pcsInnerSensorStatusData
         };
 
         console.log("---------------------------------------------");
-        console.log("전송한 배터리 데이터 : " + JSON.stringify(sendData));
+        console.log("전송한 PCS 내부 센서 데이터 : " + JSON.stringify(sendData));
         console.log("---------------------------------------------\n\n");
 
         ws.send(JSON.stringify(sendData));
 
-        index++;
+        pcsInnerSensorIndex++;
 
-        if (index == 5) {
-            index = 0;
+        if (pcsInnerSensorIndex == 10) {
+            pcsInnerSensorIndex = 0;
+        }
+    }
+
+    function sendBatteryInnerSensorStatusData() {
+        console.log("[ BatteryInnerSensor ]")
+
+        let deviceCode;
+        let deviceName;
+
+        if (batteryInnerSensorIndex % 2 == 0) {
+            deviceCode = 'D003';
+            deviceName = '온도';
+        } else if (batteryInnerSensorIndex % 2 == 1) {
+            deviceCode = 'D004';
+            deviceName = '습도';
         }
 
-        insertStatusData(sensorData, '/ajax/insertSensorStatusData');
+        let batteryInnerSensorStatusData = {
+            pmsCode: 'P001',
+            essCode: 'E001',
+            deviceCode: deviceCode,
+            deviceName: deviceName,
+            measures: getRandomValue(1, 100)
+        }
+
+        insertStatusData(batteryInnerSensorStatusData, '/ajax/insertBatteryInnerSensorStatusData');
+
+        batteryInnerSensorStatusData.faultExistYn = 'N';
+
+        let sendData = {
+            id: 'M/W001',
+            eventType: 'req',
+            deviceType: 'batteryInnerSensor',
+            dataType: 'status',
+            data: batteryInnerSensorStatusData
+        };
+
+        console.log("---------------------------------------------");
+        console.log("전송한 배터리 내부 센서 데이터 : " + JSON.stringify(sendData));
+        console.log("---------------------------------------------\n\n");
+
+        ws.send(JSON.stringify(sendData));
+
+        batteryInnerSensorIndex++;
+
+        if (batteryInnerSensorIndex == 10) {
+            batteryInnerSensorIndex = 0;
+        }
     }
 
     function insertStatusData(data, url) {
@@ -487,6 +425,10 @@
 
             }
         });
+    }
+
+    function getRandomValue(min, max) {
+        return Math.floor(Math.random() * (max - min + 1)) + min;
     }
 </script>
 </html>

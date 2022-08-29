@@ -21,6 +21,7 @@
                     , BATTERY_VOLT
                     , BATTERY_CURR
                     , DIS_CHARGE_POWER
+                    , REG_DATE
 
                     ) VALUES
                    ( 'E001'
@@ -38,6 +39,7 @@
                     , #{dcBatteryVolt}
                     , #{dcBatteryCurr}
                     , #{disChargePower}
+                    , #{regDate}
 
                     )
 
@@ -54,15 +56,17 @@
         , CURRENT_SENSOR_1
         , CURRENT_SENSOR_2
         , CHARGE_CURRENT_LIMIT
+        , REG_DATE
         ) VALUES
         ( '1'
-        , CHARGING_STATUS
-        , USER_SOC
-        , REAL_SOC
-        , RACK_VOLT
-        , CURRENT_SENSOR_1
-        , CURRENT_SENSOR_2
-        , CHARGE_CURRENT_LIMIT
+        , #{chargingStatus}
+        , #{userSoc}
+        , #{realSoc}
+        , #{rackVolt}
+        , #{currentSensor1}
+        , #{currentSensor2}
+        , #{chargeCurrentLimit}
+        , #{regDate}
         )
 
     </insert>
