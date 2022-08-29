@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.metisinfo.pms_web_socket_middleware.controller.MainMapper">
+
+    <insert id="insertPcsData" parameterType="PcsStatusObject">
+
+        INSERT INTO PMS_RAW_STATUS_PCS_INFO
+                    ( ESS_CODE
+                    , OPERATION_STATUS
+                    , CHARGING_STATUS
+                    , FAULT_EXIST_YN
+                    , R_S_VOLT
+                    , S_T_VOLT
+                    , T_R_VOLT
+                    , UP_R_CURR
+                    , UP_S_CURR
+                    , UP_T_CURR
+                    , FREQUENCY_HZ
+                    , DC_VOLT
+                    , BATTERY_VOLT
+                    , BATTERY_CURR
+                    , DIS_CHARGE_POWER
+
+                    ) VALUES
+                   ( 'E001'
+                    , '07'
+                    , #{chargingStatus}
+                    , 'N'
+                    , #{rSVolt}
+                    , #{sTVolt}
+                    , #{tRVolt}
+                    , #{upRCurr}
+                    , #{upSCurr}
+                    , #{upTCurr}
+                    , #{frequencyHz}
+                    , #{dcLinkVolt}
+                    , #{dcBatteryVolt}
+                    , #{dcBatteryCurr}
+                    , #{disChargePower}
+
+                    )
+
+    </insert>
+
+</mapper>
