@@ -3,7 +3,7 @@
 
 <mapper namespace="kr.co.metisinfo.pms_web_socket_middleware.controller.MainMapper">
 
-    <insert id="insertPcsData" parameterType="PcsStatusObject">
+    <insert id="insertPcsData" parameterType="pcsStatusObject">
 
         INSERT INTO PMS_RAW_STATUS_PCS_INFO
                     ( ESS_CODE
@@ -42,5 +42,59 @@
                     )
 
     </insert>
+
+   <!-- <insert id="insertBatteryData" parameterType="BatteryStatusObject">
+
+        INSERT INTO PMS_RAW_STATUS_BATTERY_RACK_INFO
+        ( RACK_NO
+        , CHARGING_STATUS
+        , RACK_OPERATION_STATUS
+        , USER_SOC
+        , REAL_SOC
+        , SOH
+        , RACK_VOLT
+        , PLUS_RESISTANCE
+        , MINUS_RESISTANCE
+        , CURRENT_SENSOR_1
+        , CURRENT_SENSOR_2
+        , CHARGE_CURRENT_LIMIT
+        , DISCHARGE_CURRENT_LIMIT
+        , CHARGE_POWER_LIMIT
+        , DISCHARGE_POWER_LIMIT
+        , MAIN_PLUS_RELAY_ACTION
+        , MAIN_PLUS_RELAY_CONTACT
+        , MAIN_MINUS_RELAY_ACTION
+        , MAIN_MINUS_RELAY_CONTACT
+        , EMERGENCY_RELAY_ACTION
+        , EMERGENCY_RELAY_CONTACT
+        , PRECHARGE_RELAY_ACTION
+
+        ) VALUES
+        ( '1'
+        , CHARGING_STATUS
+        , RACK_OPERATION_STATUS
+        , USER_SOC
+        , REAL_SOC
+        , SOH
+        , RACK_VOLT
+        , PLUS_RESISTANCE
+        , MINUS_RESISTANCE
+        , CURRENT_SENSOR_1
+        , CURRENT_SENSOR_2
+        , CHARGE_CURRENT_LIMIT
+        , DISCHARGE_CURRENT_LIMIT
+        , CHARGE_POWER_LIMIT
+        , DISCHARGE_POWER_LIMIT
+        , MAIN_PLUS_RELAY_ACTION
+        , MAIN_PLUS_RELAY_CONTACT
+        , MAIN_MINUS_RELAY_ACTION
+        , MAIN_MINUS_RELAY_CONTACT
+        , EMERGENCY_RELAY_ACTION
+        , EMERGENCY_RELAY_CONTACT
+        , PRECHARGE_RELAY_ACTION
+
+        )
+
+    </insert>-->
 
 </mapper>
