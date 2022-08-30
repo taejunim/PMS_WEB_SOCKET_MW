@@ -22,4 +22,5 @@ public class PcsStatusObject {
     public String upTCurr;
     public String dcBatteryCurr;
     public List<FaultListObject> faultList;
+    public String regDate;
 }

@@ -19,11 +19,11 @@
     let pcsInnerSensorIndex = 0;
     let batteryInnerSensorIndex = 0;
 
-    let ws = new WebSocket('ws://localhost:3100');
+    //let ws = new WebSocket('ws://localhost:3100');
     //var ws = new WebSocket('ws://101.101.216.193:3100');
     //var ws = new WebSocket('ws://14.39.99.148:7003'); // Server
     //var ws = new WebSocket('ws://172.30.1.24:3100'); // Server
-    //var ws = new WebSocket('ws://101.101.208.212:3100');
+    var ws = new WebSocket('ws://101.101.208.212:3100'); // 신규 개발 서버
 
     ws.onopen = (event) => {
         console.log("------------------ 접속 요청 ------------------");
@@ -223,6 +223,7 @@
             tRVolt : getRandomValue(1, 100),
             upTCurr : getRandomValue(1, 100),
             dcBatteryCurr : getRandomValue(1, 100),
+            regDate : Math.floor(new Date().getTime() / 1000)
         };
 
         insertStatusData(pcsStatusData, '/ajax/insertPcsStatusData'); //전송한 데이터 DB Insert
@@ -284,7 +285,8 @@
             rackCurrent: getRandomValue(1, 100),
             currentSensor1: getRandomValue(1, 100),
             currentSensor2: getRandomValue(1, 100),
-            currentLimit: getRandomValue(1, 100)
+            currentLimit: getRandomValue(1, 100),
+            regDate : Math.floor(new Date().getTime() / 1000)
         }
 
         insertStatusData(batteryStatusData, '/ajax/insertBatteryStatusData'); //전송한 데이터 DB Insert
@@ -321,10 +323,10 @@
         let deviceName;
 
         if (pcsInnerSensorIndex % 2 == 0) {
-            deviceCode = 'D001';
+            deviceCode = '0401';
             deviceName = '온도';
         } else if (pcsInnerSensorIndex % 2 == 1) {
-            deviceCode = 'D002';
+            deviceCode = '0601';
             deviceName = '습도';
         }
 
@@ -333,7 +335,8 @@
             essCode: 'E001',
             deviceCode: deviceCode,
             deviceName: deviceName,
-            measures: getRandomValue(1, 100)
+            measures: getRandomValue(1, 100),
+            regDate : Math.floor(new Date().getTime() / 1000)
         }
 
         insertStatusData(pcsInnerSensorStatusData, '/ajax/insertPcsInnerSensorStatusData');
@@ -368,10 +371,10 @@
         let deviceName;
 
         if (batteryInnerSensorIndex % 2 == 0) {
-            deviceCode = 'D003';
+            deviceCode = '0501';
             deviceName = '온도';
         } else if (batteryInnerSensorIndex % 2 == 1) {
-            deviceCode = 'D004';
+            deviceCode = '0701';
             deviceName = '습도';
         }
 
@@ -380,7 +383,8 @@
             essCode: 'E001',
             deviceCode: deviceCode,
             deviceName: deviceName,
-            measures: getRandomValue(1, 100)
+            measures: getRandomValue(1, 100),
+            regDate : Math.floor(new Date().getTime() / 1000)
         }
 
         insertStatusData(batteryInnerSensorStatusData, '/ajax/insertBatteryInnerSensorStatusData');

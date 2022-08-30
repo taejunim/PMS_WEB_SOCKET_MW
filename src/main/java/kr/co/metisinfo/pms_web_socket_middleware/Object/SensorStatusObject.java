@@ -13,4 +13,5 @@ public class SensorStatusObject {
     public String deviceName;
     public String faultExistYn;
     public String measures;
+    public String regDate;
 }

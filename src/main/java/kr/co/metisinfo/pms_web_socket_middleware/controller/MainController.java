@@ -27,7 +27,7 @@ public class MainController {
     @RequestMapping("/ajax/insertPcsStatusData")
     public String insertPcsStatusData(@RequestBody PcsStatusObject pcsStatusObject) {
 
-        System.out.println("[ ---------- PCS Status Data ----------  ]");
+        System.out.println("[ ---------- PCS Status Data ---------- ]");
         System.out.println("operationStatus : " + pcsStatusObject.operationStatus);
         System.out.println("chargingStatus : " + pcsStatusObject.chargingStatus);
         System.out.println("faultExistYn : " + pcsStatusObject.faultExistYn);
@@ -43,7 +43,6 @@ public class MainController {
         System.out.println("upTCurr : " + pcsStatusObject.upTCurr);
         System.out.println("dcBatteryCurr : " + pcsStatusObject.dcBatteryCurr);
         System.out.println("faultList : " + pcsStatusObject.faultList);
-        System.out.println("[ -------------------------------------  ]\n\n");
 
         if (pcsStatusObject.chargingStatus.equals("charging")) {
             pcsStatusObject.chargingStatus = "1";
@@ -53,8 +52,9 @@ public class MainController {
             pcsStatusObject.chargingStatus = "0";
         }
 
-        int result = mainSerivceImpl.insertPcsData(pcsStatusObject);
-        System.out.println("PCS 등록 결과: "+result);
+        System.out.println("[ ------------------------------------- ]");
+        System.out.println("[ ---------- PCS 등록 결과 : " + mainSerivceImpl.insertPcsData(pcsStatusObject) + " ---------- ]");
+        System.out.println("[ ------------------------------------- ]\n\n");
 
         return "main";
     }
@@ -62,7 +62,7 @@ public class MainController {
     @RequestMapping("/ajax/insertBatteryStatusData")
     public String insertBatteryStatusData(@RequestBody BatteryStatusObject batteryStatusObject) {
 
-        System.out.println("[ ---------- Battery Status Data ----------  ]");
+        System.out.println("[ ---------- Battery Status Data ---------- ]");
         System.out.println("rackNo : " + batteryStatusObject.rackNo);
         System.out.println("chargingStatus : " + batteryStatusObject.chargingStatus);
         System.out.println("soc : " + batteryStatusObject.soc);
@@ -73,10 +73,18 @@ public class MainController {
         System.out.println("currentSensor2 : " + batteryStatusObject.currentSensor2);
         System.out.println("currentLimit : " + batteryStatusObject.currentLimit);
         System.out.println("faultList : " + batteryStatusObject.faultList);
-        System.out.println("[ -----------------------------------------  ]\n\n");
 
-        int result = mainSerivceImpl.insertBatteryData(batteryStatusObject);
-        System.out.println("배터리 등록 결과: "+result);
+        if (batteryStatusObject.chargingStatus.equals("charging")) {
+            batteryStatusObject.chargingStatus = "1";
+        } else if (batteryStatusObject.chargingStatus.equals("discharging")) {
+            batteryStatusObject.chargingStatus = "2";
+        } else if (batteryStatusObject.chargingStatus.equals("waiting")) {
+            batteryStatusObject.chargingStatus = "0";
+        }
+
+        System.out.println("[ -------------------------------------------- ]");
+        System.out.println("[ ------------- 배터리 등록 결과 : " + mainSerivceImpl.insertBatteryData(batteryStatusObject) + " ------------- ]");
+        System.out.println("[ -------------------------------------------- ]\n\n");
 
         return "main";
     }
@@ -84,17 +92,17 @@ public class MainController {
     @RequestMapping("/ajax/insertPcsInnerSensorStatusData")
     public String insertPcsInnerSensorStatusData(@RequestBody SensorStatusObject sensorStatusObject) {
 
-        System.out.println("[ ---------- PCS Sensor Status Data ----------  ]");
+        System.out.println("[ ---------- PCS Sensor Status Data ---------- ]");
         System.out.println("pmsCode : " + sensorStatusObject.pmsCode);
         System.out.println("essCode : " + sensorStatusObject.essCode);
         System.out.println("deviceCode : " + sensorStatusObject.deviceCode);
         System.out.println("deviceName : " + sensorStatusObject.deviceName);
         System.out.println("faultExistYn : " + sensorStatusObject.faultExistYn);
         System.out.println("measures : " + sensorStatusObject.measures);
-        System.out.println("[ -----------------------------------------  ]\n\n");
 
-        int result = mainSerivceImpl.insertSensorData(sensorStatusObject);
-        System.out.println("PCS실 센서 등록 결과: "+result);
+        System.out.println("[ ----------------------------------------------- ]");
+        System.out.println("[ ------------ PCS실 센서 등록 결과 : " + mainSerivceImpl.insertSensorData(sensorStatusObject) + " ------------ ]");
+        System.out.println("[ ----------------------------------------------- ]\n\n");
 
         return "main";
     }
@@ -102,17 +110,17 @@ public class MainController {
     @RequestMapping("/ajax/insertBatteryInnerSensorStatusData")
     public String insertBatteryInnerSensorStatusData(@RequestBody SensorStatusObject sensorStatusObject) {
 
-        System.out.println("[ ---------- Battery Sensor Status Data ----------  ]");
+        System.out.println("[ ---------- Battery Sensor Status Data ---------- ]");
         System.out.println("pmsCode : " + sensorStatusObject.pmsCode);
         System.out.println("essCode : " + sensorStatusObject.essCode);
         System.out.println("deviceCode : " + sensorStatusObject.deviceCode);
         System.out.println("deviceName : " + sensorStatusObject.deviceName);
         System.out.println("faultExistYn : " + sensorStatusObject.faultExistYn);
         System.out.println("measures : " + sensorStatusObject.measures);
-        System.out.println("[ -----------------------------------------  ]\n\n");
 
-        int result = mainSerivceImpl.insertSensorData(sensorStatusObject);
-        System.out.println("배터리실 센서 등록 결과: "+result);
+        System.out.println("[ ------------------------------------------------ ]");
+        System.out.println("[ ------------- 배터리실 센서 등록 결과: " + mainSerivceImpl.insertSensorData(sensorStatusObject) + " ------------- ]");
+        System.out.println("[ ------------------------------------------------ ]\n\n");
 
         return "main";
     }
