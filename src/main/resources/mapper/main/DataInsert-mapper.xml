@@ -71,6 +71,21 @@
 
     </insert>
 
+    <insert id="insertDisChargeData" parameterType="pcsStatusObject">
+
+        INSERT INTO PMS_GROUP_DIS_CHARGE_HISTORY
+        ( DIS_CHARGE_ID
+        , DIS_CHARGE_SEQ
+        , CHARGE_GBN
+        , DIS_CHARGE_SUM_VALUE
+        ) VALUES
+        ( (SELECT CONCAT('GR',DATE_FORMAT(now(), '%Y%m%d%H%i%s')) DIS_CHARGE_ID FROM DUAL)
+        , (SELECT IFNULL((MAX(DIS_CHARGE_SEQ) + 1), 1) DIS_CHARGE_SEQ FROM PMS_GROUP_DIS_CHARGE_HISTORY a)
+        , #{chargingStatus}
+        , #{disChargePower}
+        )
+    </insert>
+
     <insert id="insertSensorData" parameterType="sensorStatusObject">
 
         INSERT INTO PMS_RAW_STATUS_SENSOR_INFO
