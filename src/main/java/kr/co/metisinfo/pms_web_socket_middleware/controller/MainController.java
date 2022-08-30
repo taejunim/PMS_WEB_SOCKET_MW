@@ -54,7 +54,7 @@ public class MainController {
         }
 
         int result = mainSerivceImpl.insertPcsData(pcsStatusObject);
-        System.out.println("결과: "+result);
+        System.out.println("PCS 등록 결과: "+result);
 
         return "main";
     }
@@ -75,6 +75,9 @@ public class MainController {
         System.out.println("faultList : " + batteryStatusObject.faultList);
         System.out.println("[ -----------------------------------------  ]\n\n");
 
+        int result = mainSerivceImpl.insertBatteryData(batteryStatusObject);
+        System.out.println("배터리 등록 결과: "+result);
+
         return "main";
     }
 
@@ -90,6 +93,9 @@ public class MainController {
         System.out.println("measures : " + sensorStatusObject.measures);
         System.out.println("[ -----------------------------------------  ]\n\n");
 
+        int result = mainSerivceImpl.insertSensorData(sensorStatusObject);
+        System.out.println("PCS실 센서 등록 결과: "+result);
+
         return "main";
     }
 
@@ -104,6 +110,9 @@ public class MainController {
         System.out.println("faultExistYn : " + sensorStatusObject.faultExistYn);
         System.out.println("measures : " + sensorStatusObject.measures);
         System.out.println("[ -----------------------------------------  ]\n\n");
+
+        int result = mainSerivceImpl.insertSensorData(sensorStatusObject);
+        System.out.println("배터리실 센서 등록 결과: "+result);
 
         return "main";
     }

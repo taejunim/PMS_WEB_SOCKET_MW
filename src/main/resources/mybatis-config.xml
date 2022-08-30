@@ -11,6 +11,7 @@
         <typeAlias alias="int"                  type="java.lang.Integer"/>
         <typeAlias alias="pcsStatusObject"      type="kr.co.metisinfo.pms_web_socket_middleware.Object.PcsStatusObject"/>
         <typeAlias alias="batteryStatusObject"  type="kr.co.metisinfo.pms_web_socket_middleware.Object.BatteryStatusObject"/>
+        <typeAlias alias="sensorStatusObject"  type="kr.co.metisinfo.pms_web_socket_middleware.Object.SensorStatusObject"/>
     </typeAliases>
 
 

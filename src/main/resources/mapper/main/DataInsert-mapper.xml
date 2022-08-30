@@ -71,4 +71,22 @@
 
     </insert>
 
+    <insert id="insertSensorData" parameterType="sensorStatusObject">
+
+        INSERT INTO PMS_RAW_STATUS_SENSOR_INFO
+        ( REG_DATE
+        , ESS_CODE
+        , DEVICE_CODE
+        , FAULT_EXIST_YN
+        , MEASURES
+        ) VALUES
+        ( #{regDate}
+        , 'E001'
+        , #{deviceCode}
+        , 'N'
+        , #{measures}
+        )
+
+    </insert>
+
 </mapper>
