@@ -17,5 +17,4 @@ public class BatteryStatusObject {
     public String currentSensor2;
     public String currentLimit;
     public List<FaultListObject> faultList;
-    public String regDate = String.valueOf(Instant.now().getEpochSecond());
 }
