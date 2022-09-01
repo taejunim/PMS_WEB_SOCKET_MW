@@ -82,11 +82,15 @@
         , DIS_CHARGE_SEQ
         , CHARGE_GBN
         , DIS_CHARGE_SUM_VALUE
-        ) VALUES
-        ( (SELECT CONCAT('GR',DATE_FORMAT(now(), '%Y%m%d%H%i%s')) DIS_CHARGE_ID FROM DUAL)
-        , (SELECT IFNULL((MAX(DIS_CHARGE_SEQ) + 1), 1) DIS_CHARGE_SEQ FROM PMS_GROUP_DIS_CHARGE_HISTORY a)
+        ) VALUE
+        ( #{disChargeId}
+        , #{disChargeSeq}
         , #{chargingStatus}
-        , #{disChargePower}
+        , ( SELECT IFNULL(
+            ( SELECT MAX(DIS_CHARGE_SUM_VALUE)
+              FROM pms_group_dis_charge_history a
+              WHERE DIS_CHARGE_ID = #{disChargeId}), 0) + #{disChargePower}
+           )
         )
     </insert>
 

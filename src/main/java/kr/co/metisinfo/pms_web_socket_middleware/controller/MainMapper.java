@@ -14,5 +14,8 @@ public interface MainMapper {
 
     int insertBatteryData(BatteryStatusObject batteryStatusObject);
 
+    int insertDisChargeData(PcsStatusObject pcsStatusObject);
+
     int insertSensorData(SensorStatusObject sensorStatusObject);
+
 }

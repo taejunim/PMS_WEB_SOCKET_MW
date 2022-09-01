@@ -23,4 +23,6 @@ public class PcsStatusObject {
     public String dcBatteryCurr;
     public List<FaultListObject> faultList;
     public String regDate;
+    public String disChargeId;
+    public String disChargeSeq;
 }

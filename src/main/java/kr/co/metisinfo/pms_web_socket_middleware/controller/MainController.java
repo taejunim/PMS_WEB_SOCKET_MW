@@ -56,6 +56,12 @@ public class MainController {
         System.out.println("[ ---------- PCS 등록 결과 : " + mainSerivceImpl.insertPcsData(pcsStatusObject) + " ---------- ]");
         System.out.println("[ ------------------------------------- ]\n\n");
 
+        if(pcsStatusObject.chargingStatus.equals("1") || pcsStatusObject.chargingStatus.equals("2")) {
+            System.out.println("[ ------------------------------------- ]");
+            System.out.println("[ -  층/방전 데이터 등록 결과 : " + mainSerivceImpl.insertDisChargeData(pcsStatusObject) + " - ]");
+            System.out.println("[ ------------------------------------- ]\n\n");
+        }
+
         return "main";
     }
 

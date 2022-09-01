@@ -14,10 +14,12 @@
     let pcsInnerSensorStatusDataInterval;
     let batteryInnerSensorStatusDataInterval;
 
-    let pcsIndex = 0;
-    let batteryIndex = 0;
-    let pcsInnerSensorIndex = 0;
+    let pcsIndex                = 0;
+    let batteryIndex            = 0;
+    let pcsInnerSensorIndex     = 0;
     let batteryInnerSensorIndex = 0;
+    let chargeDischargeIndex    = 1;
+    let chargeDischargeId       = "";
 
     //let ws = new WebSocket('ws://localhost:3100');
     //var ws = new WebSocket('ws://101.101.216.193:3100');
@@ -210,6 +212,22 @@
             chargingStatus = 'discharging';
         }
 
+        if(pcsIndex !== 0 && pcsIndex !== 300 && pcsIndex !== 600) {
+            chargeDischargeIndex ++;
+        } else {
+            chargeDischargeIndex = 1;
+
+            let date = new Date();
+            let yyyy = date.getFullYear();
+            let mm   = ('0' + (date.getMonth() + 1)).slice(-2);
+            let dd   = ('0' + date.getDate()).slice(-2);
+            let hh   = ('0' + date.getHours()).slice(-2);
+            let mi   = ('0' + date.getMinutes()).slice(-2);
+            let ss   = ('0' + date.getSeconds()).slice(-2);
+
+            chargeDischargeId = "GR" + yyyy + mm + dd + hh + mi + ss ;
+        }
+
         let pcsStatusData = {
             chargingStatus : chargingStatus,
             disChargePower : chargingStatus == 'waiting' ? '0' : getRandomValue(1,100),
@@ -223,7 +241,9 @@
             tRVolt : getRandomValue(1, 100),
             upTCurr : getRandomValue(1, 100),
             dcBatteryCurr : getRandomValue(1, 100),
-            regDate : Math.floor(new Date().getTime() / 1000)
+            regDate : Math.floor(new Date().getTime() / 1000),
+            disChargeId : chargeDischargeId,
+            disChargeSeq : chargeDischargeIndex
         };
 
         insertStatusData(pcsStatusData, '/ajax/insertPcsStatusData'); //전송한 데이터 DB Insert

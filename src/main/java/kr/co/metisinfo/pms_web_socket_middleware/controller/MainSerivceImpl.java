@@ -24,6 +24,11 @@ public class MainSerivceImpl {
         return mainMapper.insertBatteryData(batteryStatusObject);
     }
 
+    public int insertDisChargeData(PcsStatusObject pcsStatusObject) {
+
+        return mainMapper.insertDisChargeData(pcsStatusObject);
+    }
+
     public int insertSensorData(SensorStatusObject sensorStatusObject) {
 
         return mainMapper.insertSensorData(sensorStatusObject);
