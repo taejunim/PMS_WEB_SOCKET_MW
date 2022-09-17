@@ -24,7 +24,7 @@
                     , REG_DATE
 
                     ) VALUES
-                   ( 'E001'
+                   ( 'E004'
                     , '07'
                     , #{chargingStatus}
                     , 'N'
@@ -60,7 +60,7 @@
         , CHARGE_CURRENT_LIMIT
         , REG_DATE
         ) VALUES
-        ( 'E001'
+        ( 'E004'
         , '1'
         , #{chargingStatus}
         , '12'
@@ -104,7 +104,7 @@
         , MEASURES
         ) VALUES
         ( #{regDate}
-        , 'E001'
+        , 'E004'
         , #{deviceCode}
         , 'N'
         , #{measures}
